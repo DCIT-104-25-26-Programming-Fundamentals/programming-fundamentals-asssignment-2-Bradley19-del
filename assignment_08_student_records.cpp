@@ -77,9 +77,164 @@
 // YOUR CODE BELOW — remove the // symbols from the scaffold and fill it in
 // =============================================================================
 
+
+
 #include <iostream>
 #include <vector>
 #include <string>
 #include <iomanip>
 using namespace std;
+
+struct Student {
+    string name;
+    int id;
+    vector<double> scores;
+};
+
+// Function declarations
+void showMenu();
+void addStudent(vector<Student>& students);
+void displayAllStudents(const vector<Student>& students);
+double calculateAverage(const Student& s);
+void calculateAverageForId(const vector<Student>& students);
+
+int main() {
+    vector<Student> students;
+    int choice;
+
+    while (true) {
+        showMenu();
+        cout << "Enter your choice (1-4): ";
+
+        if (!(cin >> choice)) {
+            cin.clear();
+            cin.ignore(10000, '\n');
+            cout << "Invalid input. Please enter a number between 1 and 4.\n\n";
+            continue;
+        }
+        cin.ignore(10000, '\n');
+
+        if (choice == 1) {
+            addStudent(students);
+        } else if (choice == 2) {
+            displayAllStudents(students);
+        } else if (choice == 3) {
+            calculateAverageForId(students);
+        } else if (choice == 4) {
+            cout << "Goodbye!\n";
+            break;
+        } else {
+            cout << "Invalid choice. Please enter a number between 1 and 4.\n";
+        }
+
+        cout << "\n";
+    }
+
+    return 0;
+}
+
+void showMenu() {
+    cout << "====================================\n";
+    cout << "     STUDENT RECORD SYSTEM MENU\n";
+    cout << "====================================\n";
+    cout << "1. Add student\n";
+    cout << "2. Display all students\n";
+    cout << "3. Calculate average score\n";
+    cout << "4. Quit\n";
+}
+
+void addStudent(vector<Student>& students) {
+    Student s;
+
+    cout << "Student name: ";
+    getline(cin, s.name);
+
+    cout << "Student ID: ";
+    if (!(cin >> s.id)) {
+        cin.clear();
+        cin.ignore(10000, '\n');
+        cout << "Invalid ID. Student was not added.\n";
+        return;
+    }
+    cin.ignore(10000, '\n');
+
+    int numScores;
+    cout << "How many scores? ";
+    if (!(cin >> numScores) || numScores < 0) {
+        cin.clear();
+        cin.ignore(10000, '\n');
+        cout << "Invalid number of scores. Student was not added.\n";
+        return;
+    }
+    cin.ignore(10000, '\n');
+
+    for (int i = 0; i < numScores; i++) {
+        double score;
+        cout << "Enter score " << i + 1 << ": ";
+        if (!(cin >> score)) {
+            cin.clear();
+            cin.ignore(10000, '\n');
+            cout << "Invalid score. Student was not added.\n";
+            return;
+        }
+        s.scores.push_back(score);
+    }
+    cin.ignore(10000, '\n');
+
+    students.push_back(s);
+    cout << "Student \"" << s.name << "\" added successfully.\n";
+}
+
+double calculateAverage(const Student& s) {
+    if (s.scores.empty()) return 0.0;
+
+    double sum = 0.0;
+    for (double score : s.scores) {
+        sum += score;
+    }
+    return sum / s.scores.size();
+}
+
+void displayAllStudents(const vector<Student>& students) {
+    if (students.empty()) {
+        cout << "No students have been added yet.\n";
+        return;
+    }
+
+    cout << fixed << setprecision(2);
+    for (const Student& s : students) {
+        cout << "Name: " << s.name << "\n";
+        cout << "ID: " << s.id << "\n";
+        cout << "Scores: ";
+        for (size_t i = 0; i < s.scores.size(); i++) {
+            cout << s.scores[i];
+            if (i != s.scores.size() - 1) cout << ", ";
+        }
+        cout << "\n";
+        cout << "Average: " << calculateAverage(s) << "\n";
+        cout << "------------------------------------\n";
+    }
+}
+
+void calculateAverageForId(const vector<Student>& students) {
+    int id;
+    cout << "Enter student ID: ";
+    if (!(cin >> id)) {
+        cin.clear();
+        cin.ignore(10000, '\n');
+        cout << "Invalid ID.\n";
+        return;
+    }
+    cin.ignore(10000, '\n');
+
+    for (const Student& s : students) {
+        if (s.id == id) {
+            cout << fixed << setprecision(2);
+            cout << s.name << "'s average score: " << calculateAverage(s) << "\n";
+            return;
+        }
+    }
+
+    cout << "No student found with ID " << id << ".\n";
+}
 
